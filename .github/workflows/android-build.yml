@@ -25,10 +25,13 @@ jobs:
         java-version: '11'
 
     - name: Set up Android SDK
-      uses: android-actions/setup-android@v2
-      with:
-        api-level: 30
-        build-tools: 30.0.3
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y wget
+        wget "https://dl.google.com/android/repository/commandlinetools-linux-6858069_latest.zip" -O commandlinetools-linux.zip
+        unzip commandlinetools-linux.zip -d $HOME/android-sdk
+        yes | $HOME/android-sdk/cmdline-tools/bin/sdkmanager --sdk_root=$HOME/android-sdk --licenses
+        $HOME/android-sdk/cmdline-tools/bin/sdkmanager --sdk_root=$HOME/android-sdk "platforms;android-30" "build-tools;30.0.3"
 
     - name: Create Cordova project
       run: |
@@ -40,8 +43,8 @@ jobs:
 
     - name: Copy application files
       run: |
-        cp -a $(pwd) counterapp/www/
-        find counterapp/www/ -type f
+        cp -a . counterapp/www/
+        ls counterapp/www/
 
     - name: Build the project
       run: |
