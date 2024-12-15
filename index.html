@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Counter App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        .navbar {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+
+        .menu-icon {
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: #f9f9f9;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+        }
+
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #f1f1f1;
+        }
+
+        .show {
+            display: block;
+        }
+
+        .history-panel {
+            margin-top: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+        }
+
+        h1 {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+
+        button {
+            font-size: 2em;
+            margin: 10px;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="navbar">
+            <span class="menu-icon" onclick="toggleMenu()">&#x22EE;</span>
+            <div id="menu" class="dropdown-content">
+                <a href="#" onclick="toggleVibration()">Vibratsiyani yoqish/o'chirish</a>
+                <a href="#" onclick="showHistory()">Tarixni ko'rish</a>
+            </div>
+        </div>
+        <h1 id="count">0</h1>
+        <button id="increment">0</button>
+        <button id="reset">Reset</button>
+        <div id="history" class="history-panel"></div>
+    </div>
+    <script>
+        let count = 0;
+        let history = [];
+        let vibrationEnabled = false;
+
+        document.addEventListener('deviceready', function() {
+            cordova.plugins.backgroundMode.enable();
+
+            document.getElementById('increment').addEventListener('click', incrementCount);
+            document.getElementById('reset').addEventListener('click', resetCount);
+
+            function incrementCount() {
+                count++;
+                updateCount();
+                if (vibrationEnabled) navigator.vibrate(100);
+            }
+
+            function resetCount() {
+                let now = new Date();
+                history.push(`${now.toLocaleString()} - ${count} marta bosildi`);
+                count = 0;
+                updateCount();
+                updateHistory();
+            }
+
+            function updateCount() {
+                document.getElementById('count').textContent = count;
+            }
+
+            function updateHistory() {
+                let historyDiv = document.getElementById('history');
+                historyDiv.innerHTML = '';
+                history.forEach(entry => {
+                    let p = document.createElement('p');
+                    p.textContent = entry;
+                    historyDiv.appendChild(p);
+                });
+            }
+
+            window.addEventListener('volumeupbutton', incrementCount);
+            window.addEventListener('volumedownbutton', incrementCount);
+        });
+
+        function toggleMenu() {
+            document.getElementById('menu').classList.toggle('show');
+        }
+
+        function toggleVibration() {
+            vibrationEnabled = !vibrationEnabled;
+            alert(`Vibratsiya ${vibrationEnabled ? 'yoqildi' : 'o'chirildi'}`);
+        }
+
+        function showHistory() {
+            let historyPanel = document.getElementById('history');
+            historyPanel.style.display = historyPanel.style.display === 'none' ? 'block' : 'none';
+        }
+    </script>
+</body>
+</html>
