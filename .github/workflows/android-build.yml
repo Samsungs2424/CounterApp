@@ -13,7 +13,7 @@ jobs:
     - name: Set up Node.js
       uses: actions/setup-node@v2
       with:
-        node-version: '16'  # Node.js versiyasini 16 yoki yangiroq qo'yish
+        node-version: '16'
 
     - name: Install Cordova
       run: npm install -g cordova
@@ -38,13 +38,16 @@ jobs:
       run: |
         cordova create counterapp
         cd counterapp
-        cordova platform add android
+        cordova platform add android[43dcd9a7-70db-4a1f-b0ae-981daa162054](https://github.com/manueldeveloper/cordova-plugin-volume-buttons?citationMarker=43dcd9a7-70db-4a1f-b0ae-981daa162054 "1")[43dcd9a7-70db-4a1f-b0ae-981daa162054](https://github.com/jlorente/cordova-plugin-volume-control?citationMarker=43dcd9a7-70db-4a1f-b0ae-981daa162054 "2")
+
+    - name: Install plugins
+      run: |
+        cordova plugin add https://github.com/manueldeveloper/cordova-plugin-volume-buttons.git
         cordova plugin add cordova-plugin-background-mode
-        cordova plugin add cordova-plugin-volume-buttons
 
     - name: Copy application files
       run: |
-        cp -a $(pwd) counterapp/www/
+        cp -a . counterapp/www/
         ls counterapp/www/
 
     - name: Build the project
