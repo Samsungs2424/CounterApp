@@ -15,8 +15,10 @@ jobs:
       with:
         node-version: '14'
 
-    - name: Install Cordova
-      run: npm install -g cordova
+    - name: Install Cordova and fs-extra
+      run: |
+        npm install -g cordova
+        npm install -g fs-extra
 
     - name: Set up Java JDK
       uses: actions/setup-java@v2
@@ -40,9 +42,7 @@ jobs:
 
     - name: Copy application files
       run: |
-        cp -r ./* counterapp/www/
-        cd counterapp
-        ls www
+        node -e "require('fs-extra').copySync('.', 'counterapp/www', { overwrite: true, filter: (src, dest) => !dest.includes('counterapp') })"
 
     - name: Build the project
       run: |
