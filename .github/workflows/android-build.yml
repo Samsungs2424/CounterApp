@@ -19,24 +19,38 @@ jobs:
       run: npm install -g cordova
 
     - name: Set up Java JDK
-      uses: actions/setup-java@v1
+      uses: actions/setup-java@v2
       with:
+        distribution: 'adopt'
         java-version: '11'
 
     - name: Set up Android SDK
       uses: android-actions/setup-android@v2
       with:
         api-level: 30
-        target: android-30
-        ndk: '22.1.7171670'
+        build-tools: 30.0.3
+
+    - name: Create Cordova project
+      run: |
+        cordova create counterapp
+        cd counterapp
+        cordova platform add android
+        cordova plugin add cordova-plugin-background-mode
+        cordova plugin add cordova-plugin-volume-buttons
+
+    - name: Copy application files
+      run: |
+        cp -r ./* counterapp/www/
+        cd counterapp
+        ls www
 
     - name: Build the project
       run: |
-        cordova platform add android
+        cd counterapp
         cordova build android
 
     - name: Archive APK
       uses: actions/upload-artifact@v4
       with:
         name: android-apk
-        path: platforms/android/app/build/outputs/apk/debug/app-debug.apk
+        path: counterapp/platforms/android/app/build/outputs/apk/debug/app-debug.apk
